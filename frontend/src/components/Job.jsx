@@ -1,55 +1,80 @@
-import React from 'react'
-import { Button } from './ui/button'
-import { Bookmark } from 'lucide-react'
-import { Avatar, AvatarImage } from './ui/avatar'
-import { Badge } from './ui/badge'
-import { useNavigate } from 'react-router-dom'
+import React from "react";
+import { Button } from "./ui/button";
+import { Bookmark } from "lucide-react";
+import { Avatar, AvatarImage } from "./ui/avatar";
+import { Badge } from "./ui/badge";
+import { useNavigate } from "react-router-dom";
 
-const Job = ({job}) => {
-    const navigate = useNavigate();
-    // const jobId = "lsekdhjgdsnfvsdkjf";
+const Job = ({ job }) => {
+  const navigate = useNavigate();
 
-    const daysAgoFunction = (mongodbTime) => {
-        const createdAt = new Date(mongodbTime);
-        const currentTime = new Date();
-        const timeDifference = currentTime - createdAt;
-        return Math.floor(timeDifference/(1000*24*60*60));
-    }
-    
-    return (
-        <div className='p-5 rounded-md shadow-xl bg-white border border-gray-100'>
-            <div className='flex items-center justify-between'>
-                <p className='text-sm text-gray-500'>{daysAgoFunction(job?.createdAt) === 0 ? "Today" : `${daysAgoFunction(job?.createdAt)} days ago`}</p>
-                <Button variant="outline" className="rounded-full" size="icon"><Bookmark /></Button>
-            </div>
+  const daysAgoFunction = (createdAt) => {
+    const createdDate = new Date(createdAt);
+    const now = new Date();
+    const diff = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
+    return diff === 0 ? "Today" : diff === 1 ? "1 day ago" : `${diff} days ago`;
+  };
 
-            <div className='flex items-center gap-2 my-2'>
-                <Button className="p-6" variant="outline" size="icon">
-                    <Avatar>
-                        <AvatarImage src={job?.company?.logo} />
-                    </Avatar>
-                </Button>
-                <div>
-                    <h1 className='font-medium text-lg'>{job?.company?.name}</h1>
-                    <p className='text-sm text-gray-500'>India</p>
-                </div>
-            </div>
+  return (
+    <div className="p-5 rounded-xl shadow-sm bg-white border border-gray-100 hover:shadow-lg transition duration-300">
+      {/* Date & Bookmark */}
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs text-gray-500">
+          {daysAgoFunction(job?.createdAt)}
+        </p>
+        {/* <Button variant="outline" size="icon" className="rounded-full">
+          <Bookmark className="w-4 h-4" />
+        </Button> */}
+      </div>
 
-            <div>
-                <h1 className='font-bold text-lg my-2'>{job?.title}</h1>
-                <p className='text-sm text-gray-600'>{job?.description}</p>
-            </div>
-            <div className='flex items-center gap-2 mt-4'>
-                <Badge className={'text-blue-700 font-bold'} variant="ghost">{job?.position} Positions</Badge>
-                <Badge className={'text-[#F83002] font-bold'} variant="ghost">{job?.jobType}</Badge>
-                <Badge className={'text-[#7209b7] font-bold'} variant="ghost">{job?.salary}LPA</Badge>
-            </div>
-            <div className='flex items-center gap-4 mt-4'>
-                <Button onClick={()=> navigate(`/description/${job?._id}`)} variant="outline">Details</Button>
-                <Button className="bg-[#7209b7]">Save For Later</Button>
-            </div>
+      {/* Company Info */}
+      <div className="flex items-center gap-3 my-3">
+        <Avatar>
+          <AvatarImage
+            src={job?.company?.logo || "https://via.placeholder.com/40"}
+            alt={job?.company?.name}
+          />
+        </Avatar>
+        <div>
+          <h3 className="text-base font-semibold">{job?.company?.name}</h3>
+          <p className="text-xs text-gray-500">India</p>
         </div>
-    )
-}
+      </div>
 
-export default Job
+      {/* Job Title & Description */}
+      <div className="my-2">
+        <h2 className="text-lg font-bold text-gray-800">{job?.title}</h2>
+        <p className="text-sm text-gray-600 line-clamp-3">{job?.description}</p>
+      </div>
+
+      {/* Badges */}
+      <div className="flex flex-wrap items-center gap-2 mt-3">
+        <Badge variant="outline" className="text-blue-700 font-medium">
+          {job?.position} Positions
+        </Badge>
+        <Badge variant="outline" className="text-[#F83002] font-medium">
+          {job?.jobType}
+        </Badge>
+        <Badge variant="outline" className="text-[#7209b7] font-medium">
+          ₹ {job?.salary} LPA
+        </Badge>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row gap-3 mt-5">
+        <Button
+          onClick={() => navigate(`/description/${job?._id}`)}
+          variant="outline"
+          className="w-full sm:w-auto text-white hover:text-gray-50 bg-[#7209b7] hover:bg-[#5c0ca4]"
+        >
+          Details
+        </Button>
+        {/* <Button className="w-full sm:w-auto bg-[#7209b7] hover:bg-[#5c0ca4] transition">
+          Save For Later
+        </Button> */}
+      </div>
+    </div>
+  );
+};
+
+export default Job;
