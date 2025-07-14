@@ -19,7 +19,6 @@ app.use(cookieParser());
 const corsOptions = {
   // origin: 'http://localhost:5173',
   origin: "https://nexthire-jobportal-ievk.onrender.com",
-
   credentials: true,
 };
 
